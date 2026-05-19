@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CET-6 写作翻译词汇默写</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="ambient-bg">
+      <div class="orb orb-one"></div>
+      <div class="orb orb-two"></div>
+      <div class="orb orb-three"></div>
+    </div>
+    <div class="module-home active" id="moduleHome">
+      <div class="module-hero">
+        <div class="hero-pill">护眼风 · 本地保存 · CET-6 专项</div>
+        <p class="eyebrow">CET-6 Training Center</p>
+        <h1>选择今天的训练内容</h1>
+        <p>先以单词训练为核心，后续逐步加入阅读、翻译和写作专项。</p>
+      </div>
+      <div class="module-grid">
+        <button class="module-card" data-module="reading">
+          <em>📖</em>
+          <span>Reading</span>
+          <strong>阅读训练</strong>
+          <p>六级阅读理解专项训练</p>
+        </button>
+        <button class="module-card" data-module="translation">
+          <em>🌏</em>
+          <span>Translation</span>
+          <strong>翻译训练</strong>
+          <p>中译英表达与句式训练</p>
+        </button>
+        <button class="module-card" data-module="writing">
+          <em>✍️</em>
+          <span>Writing</span>
+          <strong>写作训练</strong>
+          <p>作文模板、观点和句型训练</p>
+        </button>
+        <button class="module-card featured" data-module="vocab">
+          <em>🌿</em>
+          <span>Vocabulary</span>
+          <strong>单词训练</strong>
+          <p>默写、记忆复习、错题库和词库管理</p>
+        </button>
+      </div>
+    </div>
+
+    <div class="module-placeholder" id="modulePlaceholder">
+      <div class="placeholder-card">
+        <p class="eyebrow" id="placeholderEyebrow">Coming Soon</p>
+        <h1 id="placeholderTitle">待开发</h1>
+        <p id="placeholderText">这个训练模块正在规划中，当前请先使用单词训练。</p>
+        <div class="top-actions">
+          <button class="ghost-btn" id="placeholderBackBtn">返回选择</button>
+          <button class="primary-btn" id="placeholderVocabBtn">进入单词训练</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reading-shell hidden" id="readingApp">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">CET-6 Reading Trainer</p>
+          <h2>阅读训练</h2>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="readingHomeBtn">返回训练选择</button>
+          <button class="primary-btn" id="readingSaveBtn">保存阅读笔记</button>
+        </div>
+      </section>
+
+      <section class="reading-layout">
+        <aside class="panel reading-list-panel">
+          <div class="panel-head">
+            <h3>文章库</h3>
+            <span id="readingCount">0 篇</span>
+          </div>
+          <div class="filters compact-filters">
+            <label>主题
+              <select id="readingTopicFilter">
+                <option value="all">全部</option>
+              </select>
+            </label>
+            <label>状态
+              <select id="readingStatusFilter">
+                <option value="all">全部</option>
+                <option value="favorite">收藏</option>
+                <option value="read">已读</option>
+                <option value="mastered">已掌握</option>
+              </select>
+            </label>
+          </div>
+          <div class="reading-list" id="readingList"></div>
+        </aside>
+
+        <main class="reading-workspace">
+          <div class="panel reading-article-panel">
+            <div class="panel-head">
+              <div>
+                <h3 id="readingTitle">请选择文章</h3>
+                <p class="muted" id="readingMeta">从左侧文章库选择一篇开始阅读。</p>
+              </div>
+              <div class="stack-actions">
+                <button class="ghost-btn" id="readingFavoriteBtn">收藏</button>
+                <button class="ghost-btn" id="readingReadBtn">标记已读</button>
+                <button class="ghost-btn" id="readingMasterBtn">标记掌握</button>
+              </div>
+            </div>
+            <div class="reading-article" id="readingArticle"></div>
+          </div>
+
+          <div class="reading-tools">
+            <div class="panel">
+              <div class="panel-head">
+                <h3>中文翻译</h3>
+                <button class="ghost-btn" id="readingToggleTranslationBtn">显示翻译</button>
+              </div>
+              <div class="reading-translation hidden" id="readingTranslation"></div>
+            </div>
+            <div class="panel">
+              <h3>重点表达</h3>
+              <div class="expression-list" id="readingExpressions"></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>阅读笔记</h3>
+            <textarea id="readingNote" class="reading-note" placeholder="记录生词、长难句、段落主旨或自己的理解。"></textarea>
+          </div>
+
+          <div class="panel reading-import-panel">
+            <div class="panel-head">
+              <h3>导入阅读文章</h3>
+              <button class="primary-btn" id="readingImportBtn">导入文章</button>
+            </div>
+            <p class="muted">支持 JSON 数组，或按下面格式粘贴多篇文章，用 --- 分隔。</p>
+            <textarea id="readingImportBox" class="reading-import-box" placeholder="标题：Digital Reading Habits
+主题：教育学习
+英文：
+Digital reading has changed how students collect information.
+
+翻译：
+数字阅读改变了学生收集信息的方式。
+
+表达：
+collect information 收集信息
+reading habits 阅读习惯
+---"></textarea>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <div class="translation-shell hidden" id="translationApp">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">CET-6 Translation Trainer</p>
+          <h2>翻译训练</h2>
+        </div>
+        <div class="top-actions">
+          <button class="ghost-btn" id="translationHomeBtn">返回训练选择</button>
+          <button class="primary-btn" id="translationSaveBtn">保存我的译文</button>
+        </div>
+      </section>
+
+      <section class="translation-layout">
+        <aside class="panel translation-list-panel">
+          <div class="panel-head">
+            <h3>题库</h3>
+            <span id="translationCount">0 题</span>
+          </div>
+          <div class="filters compact-filters">
+            <label>主题
+              <select id="translationTopicFilter">
+                <option value="all">全部</option>
+              </select>
+            </label>
+            <label>状态
+              <select id="translationStatusFilter">
+                <option value="all">全部</option>
+                <option value="favorite">收藏</option>
+                <option value="mastered">已掌握</option>
+                <option value="unfinished">未完成</option>
+              </select>
+            </label>
+          </div>
+          <div class="translation-list" id="translationList"></div>
+        </aside>
+
+        <main class="translation-workspace">
+          <div class="panel translation-question">
+            <div class="panel-head">
+              <div>
+                <h3 id="translationTitle">请选择题目</h3>
+                <p class="muted" id="translationMeta">从左侧题库选择一篇开始练习。</p>
+              </div>
+              <div class="stack-actions">
+                <button class="ghost-btn" id="translationFavoriteBtn">收藏</button>
+                <button class="ghost-btn" id="translationMasterBtn">标记掌握</button>
+              </div>
+            </div>
+            <div class="translation-prompt" id="translationPrompt"></div>
+            <label>我的英文译文
+              <textarea id="translationAnswer" class="translation-answer" placeholder="在这里输入你的英文翻译，点击保存后会自动保存在本机浏览器。"></textarea>
+            </label>
+          </div>
+
+          <div class="translation-tools">
+            <div class="panel">
+              <div class="panel-head">
+                <h3>参考译文</h3>
+                <button class="ghost-btn" id="translationToggleReferenceBtn">显示参考</button>
+              </div>
+              <div class="reference-box hidden" id="translationReference"></div>
+            </div>
+            <div class="panel">
+              <h3>重点表达</h3>
+              <div class="expression-list" id="translationExpressions"></div>
+            </div>
+          </div>
+
+          <div class="panel translation-manage">
+            <div class="panel-head">
+              <h3>翻译题管理</h3>
+              <div class="stack-actions">
+                <button class="ghost-btn" id="translationNewBtn">新建题目</button>
+                <button class="danger-ghost" id="translationDeleteBtn">删除当前题</button>
+              </div>
+            </div>
+            <form id="translationForm" class="translation-form">
+              <input type="hidden" id="translationEditId" />
+              <div class="form-row">
+                <label>标题
+                  <input id="translationFormTitle" placeholder="如：中国茶文化" required />
+                </label>
+                <label>主题
+                  <input id="translationFormTopic" placeholder="如：传统文化" required />
+                </label>
+              </div>
+              <div class="form-row">
+                <label>年份 / 来源标记
+                  <input id="translationFormYear" placeholder="如：2024年6月 / 自定义" />
+                </label>
+                <label>来源
+                  <input id="translationFormSource" placeholder="如：真题风格训练 / 手动添加" />
+                </label>
+              </div>
+              <label>中文原文 / 例句
+                <textarea id="translationFormPrompt" placeholder="输入需要翻译的中文段落或例句" required></textarea>
+              </label>
+              <label>参考译文
+                <textarea id="translationFormReference" placeholder="输入参考英文译文" required></textarea>
+              </label>
+              <label>重点表达
+                <textarea id="translationFormExpressions" placeholder="每行一个表达，如：be located in 位于"></textarea>
+              </label>
+              <button class="primary-btn" type="submit">保存到翻译题库</button>
+            </form>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <div class="app-shell hidden" id="vocabApp">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">C6</div>
+          <div>
+            <h1>六级词汇默写</h1>
+            <p>写作 / 翻译高频名词动词</p>
+          </div>
+        </div>
+        <nav class="nav">
+          <button class="nav-btn active" data-view="dashboard">首页</button>
+          <button class="nav-btn" data-view="practice">开始默写</button>
+          <button class="nav-btn" data-view="mistakes">错题库</button>
+          <button class="nav-btn" data-view="library">词库管理</button>
+          <button class="nav-btn" data-view="importExport">备份导入</button>
+        </nav>
+        <button class="back-home-btn" id="moduleHomeBtn">返回训练选择</button>
+        <div class="side-card">
+          <div class="mini-title">今日建议</div>
+          <p>优先练习「今日复习」和「错题」，再补充 10-20 个新词。</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">CET-6 Vocabulary Trainer</p>
+            <h2 id="pageTitle">首页</h2>
+          </div>
+          <div class="top-actions">
+            <button class="ghost-btn" id="resetDemoBtn">重置内置词库</button>
+            <button class="primary-btn" data-jump="practice">开始今日默写</button>
+          </div>
+        </section>
+
+        <section class="view active" id="dashboardView">
+          <div class="stats-grid">
+            <div class="stat-card"><span id="totalWords">0</span><p>总词数</p></div>
+            <div class="stat-card"><span id="dueWords">0</span><p>今日复习</p></div>
+            <div class="stat-card"><span id="mistakeWords">0</span><p>错题数量</p></div>
+            <div class="stat-card"><span id="masteredWords">0</span><p>已掌握</p></div>
+          </div>
+          <div class="content-grid">
+            <div class="panel wide">
+              <div class="panel-head">
+                <h3>学习进度</h3>
+                <span id="accuracyText">正确率 0%</span>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-bar"><div id="masterProgress"></div></div>
+                <p id="progressHint">先从写作高频动词开始默写，最容易提升作文表达。</p>
+              </div>
+            </div>
+            <div class="panel">
+              <h3>快捷训练</h3>
+              <div class="quick-list">
+                <button class="quick-btn" data-quick="due">练今日复习</button>
+                <button class="quick-btn" data-quick="mistake">只练错题</button>
+                <button class="quick-btn" data-quick="verb">只练动词</button>
+                <button class="quick-btn" data-quick="noun">只练名词</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="practiceView">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>选择考察范围</h3>
+              <button class="ghost-btn" id="buildSessionBtn">生成题目</button>
+            </div>
+            <div class="filters">
+              <label>词性
+                <select id="filterPart">
+                  <option value="all">全部</option>
+                  <option value="名词">名词</option>
+                  <option value="动词">动词</option>
+                  <option value="形容词">形容词</option>
+                  <option value="短语">短语</option>
+                </select>
+              </label>
+              <label>分类
+                <select id="filterCategory">
+                  <option value="all">全部</option>
+                </select>
+              </label>
+              <label>状态
+                <select id="filterStatus">
+                  <option value="all">全部</option>
+                  <option value="due">今日复习</option>
+                  <option value="mistake">错题</option>
+                  <option value="new">未学</option>
+                  <option value="learning">学习中</option>
+                  <option value="mastered">已掌握</option>
+                </select>
+              </label>
+              <label>数量
+                <input id="quizCount" type="number" min="1" max="100" value="20" />
+              </label>
+            </div>
+          </div>
+
+          <div class="practice-layout">
+            <div class="quiz-card" id="quizCard">
+              <div class="quiz-empty">
+                <h3>请先生成题目</h3>
+                <p>建议选择「动词 / 写作高频」或「今日复习」开始。</p>
+              </div>
+            </div>
+            <div class="panel practice-side">
+              <h3>本轮进度</h3>
+              <p id="sessionMeta">尚未开始</p>
+              <div class="session-stats">
+                <span>正确 <b id="sessionCorrect">0</b></span>
+                <span>错误 <b id="sessionWrong">0</b></span>
+              </div>
+              <button class="danger-ghost" id="endSessionBtn">结束本轮</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="mistakesView">
+          <div class="panel">
+            <div class="panel-head">
+              <h3>错题库</h3>
+              <button class="primary-btn" id="practiceMistakesBtn">开始错题默写</button>
+            </div>
+            <div id="mistakeList" class="word-list"></div>
+          </div>
+        </section>
+
+        <section class="view" id="libraryView">
+          <div class="content-grid">
+            <div class="panel">
+              <h3>手动添加单词</h3>
+              <form id="wordForm" class="word-form">
+                <input id="englishInput" placeholder="英文，如 promote" required />
+                <input id="chineseInput" placeholder="中文释义，如 促进，推动" required />
+                <select id="partInput">
+                  <option>动词</option>
+                  <option>名词</option>
+                  <option>形容词</option>
+                  <option>短语</option>
+                </select>
+                <input id="categoryInput" placeholder="分类，如 写作高频 / 科技 / 教育" value="自定义" />
+                <textarea id="exampleInput" placeholder="例句（可选）"></textarea>
+                <button class="primary-btn" type="submit">添加到词库</button>
+              </form>
+            </div>
+            <div class="panel wide">
+              <div class="panel-head">
+                <h3>全部词库</h3>
+                <input class="search" id="librarySearch" placeholder="搜索英文/中文/分类" />
+              </div>
+              <div id="libraryList" class="word-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="importExportView">
+          <div class="content-grid">
+            <div class="panel">
+              <h3>批量导入</h3>
+              <p class="muted">每行一个：英文 | 中文 | 词性 | 分类 | 例句</p>
+              <textarea id="bulkImport" class="big-textarea" placeholder="facilitate | 促进，使便利 | 动词 | 写作高频,发展类 | Technology can facilitate communication."></textarea>
+              <button class="primary-btn" id="bulkImportBtn">导入单词</button>
+            </div>
+            <div class="panel">
+              <h3>备份与恢复</h3>
+              <p class="muted">导出 JSON 可以备份你的词库、错题和学习记录。</p>
+              <div class="stack-actions">
+                <button class="ghost-btn" id="exportBtn">导出 JSON</button>
+                <label class="file-label">导入 JSON<input type="file" id="importFile" accept="application/json" /></label>
+              </div>
+              <textarea id="exportBox" class="big-textarea" readonly placeholder="导出的 JSON 会显示在这里"></textarea>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
