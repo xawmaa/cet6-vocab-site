@@ -210,7 +210,7 @@ const readingArticles = [
     translation: [
       "在短视频和即时答案盛行的时代，学习常常被期待变得快速而有趣。许多学生在进步没有立刻显现时会变得不耐烦。然而，一些最有价值的学习形式本来就是缓慢的。它们需要反复阅读、仔细比较，并愿意在一段时间里保持困惑。",
       "慢学习并不意味着低效学习。相反，它能让观念彼此连接，而不仅仅是被记住。当学生花时间钻研一篇难文章、一个复杂理论或一项有挑战的写作任务时，他们会逐渐建立独立思考的能力。这种能力无法被下载，也无法被几秒钟生成的摘要取代。",
-      "因此，教师和学习者都应该为困难留出空间。好的教育并不是简单地清除所有障碍。它应该帮助学生培养耐心和信心，去处理那些没有即时答案的问题。"
+      "因此，教师和学习者都应该为困难留出空间。好的教育并不是简单地清除所有障碍。它应该帮助学生培养耐心 and 信心，去处理那些没有即时答案的问题。"
     ],
     expressions: ["instant answers 即时答案", "become impatient 变得不耐烦", "on the contrary 相反", "wrestle with 努力处理", "make room for 为……留出空间"]
   },
@@ -263,7 +263,7 @@ const readingArticles = [
     ],
     translation: [
       "远程办公改变了工作场所的含义。对许多员工来说，工作不再与固定办公桌或每日通勤绑定。这种灵活性可以节省时间并提高专注力，尤其适合需要深度思考的任务。然而，远程办公也暴露出一种在传统办公室中有时被隐藏的能力：自我管理。",
-      "如果没有清晰边界，工作很容易蔓延到生活的每个角落。晚饭后仍有消息到来，会议占满一天，员工在没有明显忙碌时可能会感到内疚。因此，成功的远程工作者需要设计规律。他们设定开始和结束时间，保护专注工作的时段，并清楚地向同事沟通进展。",
+      "如果没有清晰边界，工作很容易蔓延到生活的每个角落。晚饭后仍有消息到来，会议占满一天，员工在没有明显忙碌时可能会感到内疚。因此，成功的远程工作者需要设计规律。他们设定开始 and 结束时间，保护专注工作的时段，并清楚地向同事沟通进展。",
       "公司也负有责任。它们应该评估结果而不是在线状态，提供合理的沟通规则，并尊重个人时间。远程办公不只是技术安排。它是对信任、自律以及在没有持续监督下合作能力的考验。"
     ],
     expressions: ["be tied to 与……绑定", "daily commute 日常通勤", "clear boundaries 清晰边界", "evaluate results 评估结果", "constant supervision 持续监督"]
@@ -366,24 +366,30 @@ let currentTranslationId = getTranslationBank()[0]?.id || "";
 const moduleInfo = {
   writing: {
     eyebrow: "Writing Training",
-    title: "写作训练待开发",
-    text: "这里后续会加入作文模板、论点素材、句型默写和作文批改。当前请先使用单词训练。"
+    title: "写作训练模块",
+    text: "这里后续会加入写作模板、核心观点语料、核心句型默写和 AI 作文自动批改。当前请先使用单词训练。"
   }
 };
 
 function loadState() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations() };
+  if (!raw) return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations(), streakDays: 0, lastStudyDate: null };
   try {
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed.words) || parsed.words.length === 0) return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations() };
+    if (!Array.isArray(parsed.words) || parsed.words.length === 0) return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations(), streakDays: 0, lastStudyDate: null };
     if (!parsed.readings) parsed.readings = {};
     if (!Array.isArray(parsed.readingBank) || parsed.readingBank.length === 0) parsed.readingBank = createSeedReadings();
     if (!parsed.translations) parsed.translations = {};
     if (!Array.isArray(parsed.translationBank) || parsed.translationBank.length === 0) parsed.translationBank = createSeedTranslations();
+    
+    // Ensure PWA and streak fields are safely handled
+    if (parsed.streakDays === undefined) parsed.streakDays = 0;
+    if (parsed.lastStudyDate === undefined) parsed.lastStudyDate = null;
+    if (!parsed.history) parsed.history = [];
+    
     return parsed;
   } catch {
-    return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations() };
+    return { words: createSeedWords(), history: [], readings: {}, readingBank: createSeedReadings(), translations: {}, translationBank: createSeedTranslations(), streakDays: 0, lastStudyDate: null };
   }
 }
 
@@ -467,6 +473,22 @@ function showPlaceholder(moduleName) {
   document.getElementById("placeholderEyebrow").textContent = info.eyebrow;
   document.getElementById("placeholderTitle").textContent = info.title;
   document.getElementById("placeholderText").textContent = info.text;
+  
+  // Custom features preview list
+  const featuresBox = document.getElementById("placeholderFeatures");
+  if (featuresBox) {
+    if (moduleName === "writing") {
+      featuresBox.innerHTML = `
+        <div class="placeholder-feature-item"><b>优秀范文精选</b>：精选教育、科技、环保等高频考题模板</div>
+        <div class="placeholder-feature-item"><b>核心论点语料库</b>：按主题归纳高级词汇和地道表达</div>
+        <div class="placeholder-feature-item"><b>经典句型默写</b>：强化强调句、倒装句、从句的输出训练</div>
+        <div class="placeholder-feature-item"><b>AI 作文批改</b>：智能检测语法错误，提供高分替换建议</div>
+      `;
+    } else {
+      featuresBox.innerHTML = "";
+    }
+  }
+  
   document.getElementById("moduleHome").classList.remove("active");
   document.getElementById("modulePlaceholder").classList.add("active");
   document.getElementById("readingApp").classList.add("hidden");
@@ -483,6 +505,340 @@ function renderAll() {
   renderTranslationModule();
 }
 
+/* ================== Toast & Audio & Debounce & Confetti ================== */
+function showToast(msg, type = "success", duration = 3000) {
+  const container = document.getElementById("toastContainer");
+  if (!container) return;
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  
+  // Auto remove toast
+  setTimeout(() => {
+    toast.classList.add("toast-out");
+    toast.addEventListener("transitionend", () => {
+      toast.remove();
+    });
+  }, duration);
+}
+
+function playSound(type) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    if (type === "correct") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(523.25, now); // C5
+      osc.frequency.setValueAtTime(783.99, now + 0.08); // G5
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } else if (type === "wrong") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "triangle";
+      
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(146.83, now); // D3
+      osc.frequency.linearRampToValueAtTime(90, now + 0.22);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    } else if (type === "complete") {
+      const now = ctx.currentTime;
+      const freqs = [261.63, 329.63, 392.00, 523.25]; // C major chord C4-E4-G4-C5
+      freqs.forEach((f, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + i * 0.04);
+        gain.gain.setValueAtTime(0.05, now + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        osc.start(now + i * 0.04);
+        osc.stop(now + 0.5);
+      });
+    }
+  } catch (e) {
+    // Fail silently
+  }
+}
+
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+function fireConfetti() {
+  const canvas = document.getElementById("confettiCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const colors = ["#7dd3fc", "#c084fc", "#fbcfe8", "#f472b6", "#34d399", "#fcd34d"];
+  const particles = [];
+  
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 5 + 4,
+      d: Math.random() * canvas.height,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.random() * 10 - 5,
+      tiltAngleIncremental: Math.random() * 0.06 + 0.02,
+      tiltAngle: 0
+    });
+  }
+  
+  let animationId;
+  let frameCount = 0;
+  
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let active = false;
+    
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.tiltAngle += p.tiltAngleIncremental;
+      p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2.2;
+      p.x += Math.sin(p.tiltAngle);
+      p.tilt = Math.sin(p.tiltAngle - i / 3) * 12;
+      
+      if (p.y <= canvas.height) {
+        active = true;
+      }
+      
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+      ctx.stroke();
+    }
+    
+    frameCount++;
+    if (active && frameCount < 180) {
+      animationId = requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cancelAnimationFrame(animationId);
+    }
+  }
+  
+  draw();
+}
+
+/* ================== Streak & History & Chart ================== */
+function updateStreak() {
+  const todayStr = new Date().toISOString().split("T")[0];
+  
+  if (!state.lastStudyDate) {
+    state.streakDays = 1;
+    state.lastStudyDate = todayStr;
+  } else if (state.lastStudyDate !== todayStr) {
+    const lastDate = new Date(state.lastStudyDate);
+    const todayDate = new Date(todayStr);
+    const diffTime = Math.abs(todayDate - lastDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) {
+      state.streakDays += 1;
+    } else if (diffDays > 1) {
+      state.streakDays = 1;
+    }
+    state.lastStudyDate = todayStr;
+  }
+  
+  saveState();
+  const streakEl = document.getElementById("streakDays");
+  if (streakEl) streakEl.textContent = state.streakDays;
+}
+
+function recordStudyActivity(ok, en) {
+  if (!state.history) state.history = [];
+  state.history.push({
+    timestamp: Date.now(),
+    correct: ok,
+    en: en
+  });
+  if (state.history.length > 800) {
+    state.history.shift();
+  }
+}
+
+function renderWeekChart() {
+  const canvas = document.getElementById("weekChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * window.devicePixelRatio || 500;
+  canvas.height = 180 * window.devicePixelRatio || 180;
+  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  
+  const width = rect.width || 500;
+  const height = 180;
+  
+  const days = [];
+  const counts = [];
+  const now = new Date();
+  
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    days.push(`${d.getMonth() + 1}/${d.getDate()}`);
+    
+    d.setHours(0,0,0,0);
+    const dayStart = d.getTime();
+    const dayEnd = dayStart + 86400000;
+    
+    const count = (state.history || []).filter(h => h.timestamp >= dayStart && h.timestamp < dayEnd).length;
+    counts.push(count);
+  }
+  
+  ctx.clearRect(0, 0, width, height);
+  
+  const paddingLeft = 32;
+  const paddingRight = 12;
+  const paddingTop = 20;
+  const paddingBottom = 26;
+  
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  
+  const maxCount = Math.max(...counts, 10);
+  
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "rgba(229, 231, 235, 0.5)";
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "right";
+  
+  const gridLines = 4;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = paddingTop + (chartHeight / gridLines) * i;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, y);
+    ctx.lineTo(width - paddingRight, y);
+    ctx.stroke();
+    
+    const val = Math.round(maxCount - (maxCount / gridLines) * i);
+    ctx.fillText(val, paddingLeft - 8, y + 3);
+  }
+  
+  const points = counts.map((c, i) => {
+    const x = paddingLeft + (chartWidth / 6) * i;
+    const y = paddingTop + chartHeight - (c / maxCount) * chartHeight;
+    return { x, y };
+  });
+  
+  const grad = ctx.createLinearGradient(0, paddingTop, 0, paddingTop + chartHeight);
+  grad.addColorStop(0, "rgba(125, 211, 252, 0.2)");
+  grad.addColorStop(1, "rgba(125, 211, 252, 0)");
+  
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, paddingTop + chartHeight);
+  ctx.lineTo(points[0].x, points[0].y);
+  for (let i = 0; i < points.length - 1; i++) {
+    const xc = (points[i].x + points[i + 1].x) / 2;
+    const yc = (points[i].y + points[i + 1].y) / 2;
+    ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+  }
+  ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+  ctx.lineTo(points[points.length - 1].x, paddingTop + chartHeight);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  
+  ctx.strokeStyle = "#7dd3fc";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 0; i < points.length - 1; i++) {
+    const xc = (points[i].x + points[i + 1].x) / 2;
+    const yc = (points[i].y + points[i + 1].y) / 2;
+    ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+  }
+  ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+  ctx.stroke();
+  
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  days.forEach((day, i) => {
+    const pt = points[i];
+    ctx.fillStyle = "rgba(125, 211, 252, 0.4)";
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = "rgba(229, 231, 235, 0.7)";
+    ctx.fillText(day, pt.x, height - 8);
+  });
+}
+
+/* ================== Typewriter ================== */
+function initTypewriter() {
+  const el = document.getElementById("heroTypewriter");
+  if (!el) return;
+  const phrases = ["选择今天的训练", "每天进步一点点", "六级，我来了！", "冲刺写作与翻译！"];
+  let phraseIdx = 0;
+  let charIdx = 0;
+  let isDeleting = false;
+  
+  function type() {
+    const currentPhrase = phrases[phraseIdx];
+    if (isDeleting) {
+      el.textContent = currentPhrase.substring(0, charIdx - 1);
+      charIdx--;
+    } else {
+      el.textContent = currentPhrase.substring(0, charIdx + 1);
+      charIdx++;
+    }
+    
+    let delay = 140 - Math.random() * 60;
+    if (isDeleting) delay /= 2;
+    
+    if (!isDeleting && charIdx === currentPhrase.length) {
+      delay = 2200;
+      isDeleting = true;
+    } else if (isDeleting && charIdx === 0) {
+      isDeleting = false;
+      phraseIdx = (phraseIdx + 1) % phrases.length;
+      delay = 500;
+    }
+    
+    setTimeout(type, delay);
+  }
+  
+  type();
+}
+
+/* ================== App Rendering Logic ================== */
 function renderDashboard() {
   const total = state.words.length;
   const due = state.words.filter(isDue).length;
@@ -491,17 +847,26 @@ function renderDashboard() {
   const correct = state.words.reduce((s, w) => s + (w.correct || 0), 0);
   const wrong = state.words.reduce((s, w) => s + (w.wrong || 0), 0);
   const acc = correct + wrong ? Math.round((correct / (correct + wrong)) * 100) : 0;
+  
   document.getElementById("totalWords").textContent = total;
   document.getElementById("dueWords").textContent = due;
   document.getElementById("mistakeWords").textContent = mistakes;
   document.getElementById("masteredWords").textContent = mastered;
+  
+  const streakEl = document.getElementById("streakDays");
+  if (streakEl) streakEl.textContent = state.streakDays || 0;
+  
   document.getElementById("accuracyText").textContent = `正确率 ${acc}%`;
   document.getElementById("masterProgress").style.width = `${total ? Math.round(mastered / total * 100) : 0}%`;
   document.getElementById("progressHint").textContent = mastered ? `你已经掌握 ${mastered} 个词，继续用错题默写巩固主动输出。` : "先从写作高频动词开始默写，最容易提升作文表达。";
+  
+  // Render Week Chart
+  setTimeout(renderWeekChart, 50);
 }
 
 function renderCategoryOptions() {
   const select = document.getElementById("filterCategory");
+  if (!select) return;
   const current = select.value;
   select.innerHTML = `<option value="all">全部</option>` + allCategories().map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
   select.value = [...select.options].some(o => o.value === current) ? current : "all";
@@ -537,17 +902,34 @@ function buildSession(words = null) {
 
 function renderQuiz(result = null) {
   const card = document.getElementById("quizCard");
+  if (!card) return;
   document.getElementById("sessionCorrect").textContent = session.correct;
   document.getElementById("sessionWrong").textContent = session.wrong;
   document.getElementById("sessionMeta").textContent = session.words.length ? `第 ${Math.min(session.index + 1, session.words.length)} / ${session.words.length} 题` : "尚未开始";
+  
   if (!session.words.length) {
     card.innerHTML = `<div class="quiz-empty"><h3>没有匹配的单词</h3><p>请调整范围，或先去词库添加单词。</p></div>`;
     return;
   }
+  
   if (session.index >= session.words.length) {
-    card.innerHTML = `<div class="quiz-empty"><h3>本轮完成</h3><p>正确 ${session.correct} 个，错误 ${session.wrong} 个。错题会自动进入错题库。</p><button class="primary-btn" onclick="buildSession()">再来一轮</button></div>`;
+    let perfectHtml = "";
+    if (session.wrong === 0 && session.correct > 0) {
+      perfectHtml = `<p class="success-color" style="font-weight:bold;margin:10px 0;color:#34d399;font-size:15px;">🏆 完美！本轮默写全部正确！ 🏆</p>`;
+      setTimeout(fireConfetti, 150);
+      playSound("complete");
+    }
+    card.innerHTML = `
+      <div class="quiz-empty">
+        <h3>本轮完成</h3>
+        <p>正确 ${session.correct} 个，错误 ${session.wrong} 个。错题会自动进入错题库。</p>
+        ${perfectHtml}
+        <button class="primary-btn" onclick="buildSession()">再来一轮</button>
+      </div>
+    `;
     return;
   }
+  
   const word = session.words[session.index];
   card.innerHTML = `
     <div class="quiz-top"><span>第 ${session.index + 1} / ${session.words.length} 题</span><span>${escapeHtml(getStatus(word))}</span></div>
@@ -563,6 +945,7 @@ function renderQuiz(result = null) {
     </div>
     ${result || ""}
   `;
+  
   const input = document.getElementById("answerInput");
   if (input) {
     input.focus();
@@ -570,6 +953,7 @@ function renderQuiz(result = null) {
       if (e.key === "Enter") checkAnswer();
     });
   }
+  
   document.getElementById("submitAnswerBtn").onclick = session.answered ? nextQuestion : checkAnswer;
   document.getElementById("dontKnowBtn").onclick = () => checkAnswer(true);
 }
@@ -582,13 +966,26 @@ function checkAnswer(forceWrong = false) {
   const accepted = [word.en, ...(word.aliases || [])].map(normalize);
   const ok = !forceWrong && accepted.includes(normalize(answer));
   const idx = state.words.findIndex(w => w.id === word.id);
-  if (idx >= 0) updateMemory(state.words[idx], ok, answer);
+  
+  if (idx >= 0) {
+    updateMemory(state.words[idx], ok, answer);
+    recordStudyActivity(ok, word.en);
+    if (ok) updateStreak();
+  }
+  
   saveState();
   session.answered = true;
-  if (ok) session.correct += 1; else session.wrong += 1;
+  if (ok) {
+    session.correct += 1;
+    playSound("correct");
+  } else {
+    session.wrong += 1;
+    playSound("wrong");
+  }
+  
   const result = `
     <div class="result-box ${ok ? "correct" : "wrong"}">
-      <b>${ok ? "答对了" : "需要复习"}</b><br />
+      <b>${ok ? "答对了 ✦" : "需要复习 ↺"}</b><br />
       正确答案：<b>${escapeHtml(word.en)}</b><br />
       你的答案：${escapeHtml(answer || "（不会）")}<br />
       ${word.example ? `例句：${escapeHtml(word.example)}` : ""}
@@ -637,13 +1034,34 @@ window.buildSession = buildSession;
 
 function renderMistakes() {
   const box = document.getElementById("mistakeList");
-  const items = state.words.filter(w => w.mistake).sort((a, b) => (b.wrong || 0) - (a.wrong || 0));
-  box.innerHTML = items.length ? items.map(wordItemHtml).join("") : `<p class="muted">暂时没有错题。答错的单词会自动进入这里。</p>`;
+  if (!box) return;
+  
+  // Populate category options inside mistakes head filter dropdown
+  const categoryFilter = document.getElementById("mistakeCategoryFilter");
+  if (categoryFilter) {
+    const current = categoryFilter.value;
+    const categories = allCategories();
+    categoryFilter.innerHTML = `<option value="all">全部分类</option>` + categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+    categoryFilter.value = ["all", ...categories].includes(current) ? current : "all";
+  }
+  
+  const part = document.getElementById("mistakePartFilter")?.value || "all";
+  const category = categoryFilter?.value || "all";
+  
+  const items = state.words.filter(w => {
+    if (!w.mistake) return false;
+    if (part !== "all" && w.part !== part) return false;
+    if (category !== "all" && !String(w.category || "").split(",").map(x => x.trim()).includes(category)) return false;
+    return true;
+  }).sort((a, b) => (b.wrong || 0) - (a.wrong || 0));
+  
+  box.innerHTML = items.length ? items.map(wordItemHtml).join("") : `<p class="muted">没有符合条件的错题。答错的单词会自动进入这里。</p>`;
   bindWordActions(box);
 }
 
 function renderLibrary() {
   const box = document.getElementById("libraryList");
+  if (!box) return;
   const q = normalize(document.getElementById("librarySearch")?.value || "");
   const items = state.words.filter(w => !q || normalize(`${w.en} ${w.cn} ${w.part} ${w.category}`).includes(q));
   box.innerHTML = items.map(wordItemHtml).join("");
@@ -682,10 +1100,23 @@ function bindWordActions(root) {
       const word = state.words.find(w => w.id === id);
       if (!word) return;
       const action = btn.dataset.action;
-      if (action === "master") { word.mastered = true; word.mistake = false; word.streak = Math.max(3, word.streak || 0); word.nextReview = Date.now() + 7 * 86400000; }
-      if (action === "clearMistake") { word.mistake = false; }
-      if (action === "delete" && confirm(`删除 ${word.en}？`)) { state.words = state.words.filter(w => w.id !== id); }
-      saveState(); renderAll();
+      if (action === "master") {
+        word.mastered = true;
+        word.mistake = false;
+        word.streak = Math.max(3, word.streak || 0);
+        word.nextReview = Date.now() + 7 * 86400000;
+        showToast(`已将「${word.en}」标记为掌握`, "success");
+      }
+      if (action === "clearMistake") {
+        word.mistake = false;
+        showToast(`已将「${word.en}」移出错题库`, "success");
+      }
+      if (action === "delete" && confirm(`删除 ${word.en}？`)) {
+        state.words = state.words.filter(w => w.id !== id);
+        showToast(`已删除单词「${word.en}」`, "error");
+      }
+      saveState();
+      renderAll();
     };
   });
 }
@@ -778,7 +1209,7 @@ function saveCurrentReading(showTip = true) {
   record.updatedAt = Date.now();
   saveState();
   renderReadingList();
-  if (showTip) alert("阅读笔记已保存到本机浏览器");
+  if (showTip) showToast("阅读笔记已保存", "success");
 }
 
 function splitParagraphs(text) {
@@ -790,13 +1221,13 @@ function countEnglishWords(paragraphs) {
 }
 
 function normalizeReadingArticle(item) {
-  const article = Array.isArray(item.article) ? item.article : splitParagraphs(item.article || item.english || "");
-  const translation = Array.isArray(item.translation) ? item.translation : splitParagraphs(item.translation || item.cn || "");
-  const expressions = Array.isArray(item.expressions) ? item.expressions : String(item.expressions || item.phrases || "").split(/\r?\n|；|;/).map(x => x.trim()).filter(Boolean);
+  const article = Array.isArray(item.article) ? item.article : splitParagraphs(item.article);
+  const translation = Array.isArray(item.translation) ? item.translation : splitParagraphs(item.translation);
+  const expressions = Array.isArray(item.expressions) ? item.expressions : String(item.expressions || "").split(/\r?\n/).map(x => x.trim()).filter(Boolean);
   return {
-    id: item.id || `custom-rd-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    title: String(item.title || "未命名阅读文章").trim(),
-    topic: String(item.topic || "自定义").trim(),
+    id: String(item.id || `custom-rd-${Date.now()}-${Math.random().toString(16).slice(2)}`).trim(),
+    title: String(item.title || "未命名文章").trim(),
+    topic: String(item.topic || "一般主题").trim(),
     level: String(item.level || "CET-6").trim(),
     words: Number(item.words) || countEnglishWords(article),
     article,
@@ -844,9 +1275,9 @@ function importReadingArticles() {
     box.value = "";
     saveState();
     renderReadingModule();
-    alert(`导入成功：${items.length} 篇文章`);
+    showToast(`导入成功：${items.length} 篇文章`, "success");
   } catch (err) {
-    alert(`导入失败：${err.message}`);
+    showToast(`导入失败：${err.message}`, "error");
   }
 }
 
@@ -938,7 +1369,7 @@ function saveCurrentTranslation(showTip = true) {
   record.updatedAt = Date.now();
   saveState();
   renderTranslationList();
-  if (showTip) alert("已保存到本机浏览器");
+  if (showTip) showToast("我的译文已保存", "success");
 }
 
 function fillTranslationForm(item = null) {
@@ -984,7 +1415,7 @@ function saveTranslationPromptFromForm(event) {
     updatedAt: Date.now()
   };
   if (!item.title || !item.topic || !item.prompt || !item.reference) {
-    alert("请至少填写标题、主题、中文原文和参考译文");
+    showToast("请至少填写标题、主题、中文原文和参考译文", "error");
     return;
   }
   if (!state.translationBank) state.translationBank = createSeedTranslations();
@@ -994,7 +1425,7 @@ function saveTranslationPromptFromForm(event) {
   currentTranslationId = id;
   saveState();
   renderTranslationModule();
-  alert("翻译题已保存");
+  showToast("翻译题已保存", "success");
 }
 
 function deleteCurrentTranslationPrompt() {
@@ -1007,6 +1438,7 @@ function deleteCurrentTranslationPrompt() {
   currentTranslationId = state.translationBank[0]?.id || "";
   saveState();
   renderTranslationModule();
+  showToast("翻译题已成功删除", "error");
 }
 
 function addWord({ en, cn, part, category, example }) {
@@ -1099,21 +1531,39 @@ function initEvents() {
   document.getElementById("buildSessionBtn").onclick = () => buildSession();
   document.getElementById("endSessionBtn").onclick = () => { session = { words: [], index: 0, correct: 0, wrong: 0, answered: false }; renderQuiz(); };
   document.getElementById("practiceMistakesBtn").onclick = () => { routeTo("practice"); buildSession(state.words.filter(w => w.mistake)); };
+  
   document.querySelectorAll(".quick-btn").forEach(btn => btn.onclick = () => {
     routeTo("practice");
     const type = btn.dataset.quick;
     const words = state.words.filter(w => type === "due" ? isDue(w) : type === "mistake" ? w.mistake : type === "verb" ? w.part === "动词" : w.part === "名词");
     buildSession(words);
   });
+  
   document.getElementById("wordForm").onsubmit = e => {
     e.preventDefault();
     try {
+      const englishInput = document.getElementById("englishInput");
+      const chineseInput = document.getElementById("chineseInput");
+      const partInput = document.getElementById("partInput");
+      const categoryInput = document.getElementById("categoryInput");
+      const exampleInput = document.getElementById("exampleInput");
+      
       addWord({ en: englishInput.value, cn: chineseInput.value, part: partInput.value, category: categoryInput.value, example: exampleInput.value });
-      saveState(); e.target.reset(); categoryInput.value = "自定义"; renderAll(); alert("添加成功");
-    } catch (err) { alert(err.message); }
+      saveState(); 
+      e.target.reset(); 
+      categoryInput.value = "自定义"; 
+      renderAll(); 
+      showToast("单词添加成功", "success");
+    } catch (err) { 
+      showToast(err.message, "error"); 
+    }
   };
-  document.getElementById("librarySearch").oninput = renderLibrary;
+  
+  // debounced library search
+  document.getElementById("librarySearch").oninput = debounce(renderLibrary, 200);
+  
   document.getElementById("bulkImportBtn").onclick = () => {
+    const bulkImport = document.getElementById("bulkImport");
     const lines = bulkImport.value.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
     let ok = 0, fail = 0;
     for (const line of lines) {
@@ -1121,11 +1571,22 @@ function initEvents() {
       if (!en || !cn) { fail++; continue; }
       try { addWord({ en, cn, part, category, example }); ok++; } catch { fail++; }
     }
-    saveState(); bulkImport.value = ""; renderAll(); alert(`导入完成：成功 ${ok} 个，跳过 ${fail} 个`);
+    saveState(); 
+    bulkImport.value = ""; 
+    renderAll(); 
+    showToast(`导入完成：成功 ${ok} 个，跳过 ${fail} 个`, ok > 0 ? "success" : "error");
   };
-  document.getElementById("exportBtn").onclick = () => { exportBox.value = JSON.stringify(state, null, 2); exportBox.select(); };
+  
+  document.getElementById("exportBtn").onclick = () => {
+    const exportBox = document.getElementById("exportBox");
+    exportBox.value = JSON.stringify(state, null, 2); 
+    exportBox.select();
+    showToast("JSON 数据已成功导出并全选", "success");
+  };
+  
   document.getElementById("importFile").onchange = async e => {
-    const file = e.target.files[0]; if (!file) return;
+    const file = e.target.files[0]; 
+    if (!file) return;
     try {
       const data = JSON.parse(await file.text());
       if (!Array.isArray(data.words)) throw new Error("格式不正确");
@@ -1133,14 +1594,85 @@ function initEvents() {
       if (!Array.isArray(data.readingBank)) data.readingBank = createSeedReadings();
       if (!data.translations) data.translations = {};
       if (!Array.isArray(data.translationBank)) data.translationBank = createSeedTranslations();
-      state = data; saveState(); renderAll(); alert("导入成功");
-    } catch (err) { alert(`导入失败：${err.message}`); }
+      
+      state = data; 
+      saveState(); 
+      renderAll(); 
+      showToast("数据导入成功", "success");
+    } catch (err) { 
+      showToast(`导入失败：${err.message}`, "error"); 
+    }
   };
+  
   document.getElementById("resetDemoBtn").onclick = () => {
     if (!confirm("会用内置词库覆盖当前数据，确定吗？")) return;
-    state = { words: createSeedWords(), history: [], readings: state.readings || {}, readingBank: state.readingBank || createSeedReadings(), translations: state.translations || {}, translationBank: state.translationBank || createSeedTranslations() }; saveState(); renderAll(); renderQuiz();
+    state = { words: createSeedWords(), history: [], readings: state.readings || {}, readingBank: state.readingBank || createSeedReadings(), translations: state.translations || {}, translationBank: state.translationBank || createSeedTranslations(), streakDays: 0, lastStudyDate: null }; 
+    saveState(); 
+    renderAll(); 
+    renderQuiz();
+    showToast("内置词库已成功重置", "success");
   };
+  
+  // Mistake Filter Handlers
+  const mistakePartFilter = document.getElementById("mistakePartFilter");
+  const mistakeCategoryFilter = document.getElementById("mistakeCategoryFilter");
+  if (mistakePartFilter && mistakeCategoryFilter) {
+    mistakePartFilter.onchange = renderMistakes;
+    mistakeCategoryFilter.onchange = renderMistakes;
+  }
+  
+  // Mobile Sidebar Slide-out Drawer Toggle & Overlay Control
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const toggleBtn = document.getElementById("sidebarToggle");
+  
+  if (toggleBtn && sidebar && overlay) {
+    toggleBtn.onclick = () => {
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("active");
+    };
+    overlay.onclick = () => {
+      sidebar.classList.remove("open");
+      overlay.classList.remove("active");
+    };
+    
+    // Clicking navigation closes slide-out drawer on mobile
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      const oldClick = btn.onclick;
+      btn.onclick = () => {
+        if (oldClick) oldClick();
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+      };
+    });
+  }
+  
+  // Keyboard Shortcuts in practiceView
+  document.addEventListener("keydown", e => {
+    const practiceView = document.getElementById("practiceView");
+    if (!practiceView || !practiceView.classList.contains("active") || !session.words.length) return;
+    
+    if (e.key === "Escape") {
+      e.preventDefault();
+      session = { words: [], index: 0, correct: 0, wrong: 0, answered: false };
+      renderQuiz();
+      showToast("本轮默写练习已结束", "error");
+      return;
+    }
+    
+    if (e.key === "Enter") {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.id === "answerInput") {
+        return; // locally managed inside answerInput listener
+      }
+      e.preventDefault();
+      const btn = document.getElementById("submitAnswerBtn");
+      if (btn) btn.click();
+    }
+  });
 }
 
+// Initialize Typewriter and App
 initEvents();
 renderAll();
+initTypewriter();

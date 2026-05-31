@@ -1,0 +1,5 @@
+请从 Pixiv 下载作品 140755505 的图片，然后放到这个 assets 文件夹中，并重命名为：
+
+hero-artwork.jpg
+
+如果下载的是 PNG，可以改名为 hero-artwork.png，同时把 index.html 里的 ./assets/hero-artwork.jpg 改成 ./assets/hero-artwork.png。
