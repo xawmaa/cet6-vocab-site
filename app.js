@@ -111,7 +111,68 @@ const baseWords = [
   { en: "digitalization", cn: "数字化", part: "名词", category: "翻译高频,科技类", example: "Digitalization improves administrative efficiency." },
   { en: "platform", cn: "平台", part: "名词", category: "翻译高频,科技类", example: "Online platforms provide learning resources." },
   { en: "application", cn: "应用，申请", part: "名词", category: "翻译高频,科技类", example: "This application is widely used in education." },
-  { en: "device", cn: "设备，装置", part: "名词", category: "翻译高频,科技类", example: "Smart devices make life more convenient." }
+  { en: "device", cn: "设备，装置", part: "名词", category: "翻译高频,科技类", example: "Smart devices make life more convenient." },
+  
+  // ==================== 扩充六级高频词汇 ====================
+  // 科技创新与数字社会
+  { en: "artificial intelligence", cn: "人工智能", part: "名词", category: "科技创新,智能时代", example: "Artificial intelligence has revolutionized various industries." },
+  { en: "virtual reality", cn: "虚拟现实", part: "名词", category: "科技创新,前沿技术", example: "Virtual reality technology provides users with immersive experiences." },
+  { en: "breakthrough", cn: "突破，重大进展", part: "名词", category: "科技创新,前沿技术", example: "Scientists have made a significant breakthrough in cancer research." },
+  { en: "penetrate", cn: "渗透，穿透", part: "动词", category: "科技创新,社会发展", example: "Smartphones have penetrated into every aspect of our lives." },
+  { en: "ubiquitous", cn: "无处不在的，普遍存在的", part: "形容词", category: "科技创新,社会发展", example: "Internet connection has become ubiquitous in modern cities." },
+  { en: "accelerate", cn: "加速，加快", part: "动词", category: "科技创新,发展类", example: "Digital technology has accelerated the sharing of information." },
+  { en: "facilitator", cn: "促进者，便利者", part: "名词", category: "科技创新,发展类", example: "The internet acts as a facilitator for global trade." },
+  { en: "cybersecurity", cn: "网络安全", part: "名词", category: "科技创新,安全类", example: "Cybersecurity is a critical concern for financial institutions." },
+  { en: "automation", cn: "自动化", part: "名词", category: "科技创新,生产力", example: "Automation has significantly increased manufacturing efficiency." },
+  { en: "state-of-the-art", cn: "最先进的，最高水平的", part: "形容词", category: "科技创新,高尖技术", example: "The lab is equipped with state-of-the-art instruments." },
+
+  // 生态环境与可持续发展
+  { en: "biodiversity", cn: "生物多样性", part: "名词", category: "生态环境,自然保护", example: "Protecting biodiversity is essential for ecological balance." },
+  { en: "renewable energy", cn: "可再生能源", part: "名词", category: "生态环境,清洁资源", example: "Solar and wind power are forms of renewable energy." },
+  { en: "low-carbon", cn: "低碳的", part: "形容词", category: "生态环境,环境保护", example: "A low-carbon lifestyle helps combat climate change." },
+  { en: "eco-friendly", cn: "环保的，对生态友好的", part: "形容词", category: "生态环境,环境保护", example: "We should choose eco-friendly products to reduce pollution." },
+  { en: "carbon neutrality", cn: "碳中和", part: "名词", category: "生态环境,绿色发展", example: "Many countries aim to achieve carbon neutrality by 2050." },
+  { en: "deteriorate", cn: "恶化，退化", part: "动词", category: "生态环境,生态破坏", example: "The air quality in the city has deteriorated due to emissions." },
+  { en: "conservation", cn: "保护，保存（自然资源）", part: "名词", category: "生态环境,自然保护", example: "Energy conservation is important for sustainable development." },
+  { en: "deplete", cn: "消耗，使枯竭", part: "动词", category: "生态环境,自然破坏", example: "Human activities continue to deplete natural resources." },
+  { en: "greenhouse effect", cn: "温室效应", part: "名词", category: "生态环境,气候变化", example: "The greenhouse effect leads to global warming." },
+  { en: "eco-system", cn: "生态系统", part: "名词", category: "生态环境,自然保护", example: "Pollution can damage the delicate balance of the eco-system." },
+
+  // 经济与全球化
+  { en: "prosperity", cn: "繁荣，兴旺", part: "名词", category: "经济发展,社会类", example: "Economic prosperity brings a higher standard of living." },
+  { en: "infrastructure", cn: "基础设施", part: "名词", category: "经济发展,建设类", example: "High-speed railways are a key part of modern infrastructure." },
+  { en: "domestic demand", cn: "内需", part: "名词", category: "经济发展,市场类", example: "The government took measures to boost domestic demand." },
+  { en: "stimulate", cn: "刺激，激发", part: "动词", category: "经济发展,政策类", example: "Tax cuts were introduced to stimulate economic growth." },
+  { en: "e-commerce", cn: "电子商务", part: "名词", category: "经济发展,数字交易", example: "E-commerce has transformed traditional retail business." },
+  { en: "entrepreneurship", cn: "创业，企业家精神", part: "名词", category: "经济发展,个人成长", example: "Universities should encourage innovation and entrepreneurship." },
+  { en: "multinational", cn: "跨国的，多国的", part: "形容词", category: "经济发展,全球化", example: "Multinational corporations play a major role in global trade." },
+  { en: "competitive edge", cn: "竞争优势", part: "名词", category: "经济发展,竞争力", example: "Continuous innovation gives the company a competitive edge." },
+  { en: "monopoly", cn: "垄断，独占", part: "名词", category: "经济发展,市场秩序", example: "Anti-monopoly laws are designed to protect fair competition." },
+  { en: "sustainable", cn: "可持续的", part: "形容词", category: "经济发展,绿色发展", example: "We must strive for sustainable economic growth." },
+
+  // 社会民生与文化交流
+  { en: "aging society", cn: "老龄化社会", part: "名词", category: "社会民生,人口结构", example: "An aging society poses challenges to social welfare systems." },
+  { en: "medical insurance", cn: "医疗保险", part: "名词", category: "社会民生,社会保障", example: "Universal medical insurance ensures basic healthcare for all." },
+  { en: "social security", cn: "社会保障", part: "名词", category: "社会民生,社会保障", example: "Social security systems help protect the vulnerable." },
+  { en: "cultural diversity", cn: "文化多样性", part: "名词", category: "文化交流,多元文化", example: "Globalization should promote respect for cultural diversity." },
+  { en: "harmonious", cn: "和谐的，融洽的", part: "形容词", category: "社会民生,和谐社会", example: "Building a harmonious society requires efforts from everyone." },
+  { en: "pension", cn: "养老金，退休金", part: "名词", category: "社会民生,社会保障", example: "The government has raised the basic pension for retirees." },
+  { en: "employment rate", cn: "就业率", part: "名词", category: "社会民生,经济指标", example: "A stable employment rate reflects a healthy economy." },
+  { en: "cultural heritage", cn: "文化遗产", part: "名词", category: "文化交流,传统保护", example: "The Great Wall is a famous world cultural heritage." },
+  { en: "intact", cn: "完好无损的", part: "形容词", category: "文化交流,传统保护", example: "Many historical buildings have been kept intact." },
+  { en: "integration", cn: "融合，一体化", part: "名词", category: "社会民生,文化交流", example: "The integration of technology and art creates new possibilities." },
+
+  // 教育与个人成长
+  { en: "all-round development", cn: "全面发展", part: "名词", category: "教育与成长,素质教育", example: "Schools should focus on the all-round development of students." },
+  { en: "lifelong learning", cn: "终身学习", part: "名词", category: "教育与成长,个人提升", example: "Lifelong learning is essential in a rapidly changing world." },
+  { en: "critical thinking", cn: "批判性思维", part: "名词", category: "教育与成长,思维训练", example: "Critical thinking helps students evaluate arguments objectively." },
+  { en: "academic excellence", cn: "学术卓越，优秀成绩", part: "名词", category: "教育与成长,校园生活", example: "The scholarship was awarded for academic excellence." },
+  { en: "potential", cn: "潜力，潜能", part: "名词", category: "教育与成长,个人提升", example: "Good teachers help students realize their full potential." },
+  { en: "peer pressure", cn: "同辈压力", part: "名词", category: "教育与成长,校园生活", example: "Teenagers are often influenced by peer pressure." },
+  { en: "curriculum", cn: "课程，课业", part: "名词", category: "教育与成长,教学相关", example: "Physical education is an important part of the school curriculum." },
+  { en: "vocational training", cn: "职业培训", part: "名词", category: "教育与成长,技能提升", example: "Vocational training prepares students for specific careers." },
+  { en: "cognitive", cn: "认知的，感知的", part: "形容词", category: "教育与成长,心理机制", example: "Reading books stimulates children's cognitive development." },
+  { en: "resilience", cn: "韧性，复原力", part: "名词", category: "教育与成长,个人提升", example: "Overcoming challenges helps young people build resilience." }
 ];
 
 const baseTranslationPrompts = [
